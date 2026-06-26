@@ -11,6 +11,16 @@
 <meta name="theme-color" content="#07080d">
 <link rel="canonical" href="https://tikibirdmenu.com/">
 
+<script>
+(function(){
+  var theme = localStorage.getItem('theme');
+  if (!theme) theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+  var meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = theme === 'light' ? '#f6f4ef' : '#07080d';
+})();
+</script>
+
 <!-- Open Graph -->
 <meta property="og:type" content="restaurant.menu">
 <meta property="og:site_name" content="Tiki Bird">
@@ -82,17 +92,41 @@
 </script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap');
-  :root{
+  :root,
+  [data-theme="dark"]{
     --bg:#07080d;
     --bg-soft:#0e1018;
     --ink:#f4f6ff;
     --muted:#8b93a7;
     --line:#1c2030;
+    --desc:#c8cde0;
+    --divider:rgba(255,255,255,.045);
+    --hero-glow:0 0 22px rgba(255,60,172,.55),0 0 4px rgba(255,60,172,.9);
+    --toggle-track:#1c2030;
+    --toggle-thumb:#f4f6ff;
     --pink:#ff3cac;
     --cyan:#5ff0e0;
     --lime:#9dff5a;
     --gold:#ffcf4d;
     --violet:#b06bff;
+  }
+
+  [data-theme="light"]{
+    --bg:#f6f4ef;
+    --bg-soft:#eceae4;
+    --ink:#1a1d28;
+    --muted:#5c6378;
+    --line:#ddd8cf;
+    --desc:#3d4458;
+    --divider:rgba(0,0,0,.06);
+    --hero-glow:0 0 18px rgba(255,60,172,.25),0 0 2px rgba(255,60,172,.5);
+    --toggle-track:#ddd8cf;
+    --toggle-thumb:#1a1d28;
+    --pink:#e02898;
+    --cyan:#0a9e8f;
+    --lime:#4a9e18;
+    --gold:#c99200;
+    --violet:#7b3fd4;
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -107,9 +141,59 @@
     -webkit-font-smoothing:antialiased;
     padding:0 20px 32px;
     overflow-x:hidden;
+    transition:background .25s ease,color .25s ease;
   }
 
   .wrap{max-width:760px;margin:0 auto}
+
+  /* ---------- THEME TOGGLE ---------- */
+  .theme-toggle{
+    position:fixed;
+    top:16px;
+    right:16px;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:6px 6px 6px 12px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:var(--bg-soft);
+    cursor:pointer;
+    font-family:'Outfit',system-ui,sans-serif;
+    font-size:.78rem;
+    font-weight:500;
+    letter-spacing:.04em;
+    color:var(--muted);
+    transition:background .25s ease,border-color .25s ease;
+  }
+  .theme-toggle:hover{color:var(--ink)}
+  .theme-toggle:focus-visible{
+    outline:2px solid var(--cyan);
+    outline-offset:2px;
+  }
+  .theme-toggle-track{
+    position:relative;
+    width:44px;
+    height:24px;
+    border-radius:999px;
+    background:var(--toggle-track);
+    transition:background .25s ease;
+  }
+  .theme-toggle-thumb{
+    position:absolute;
+    top:3px;
+    left:3px;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:var(--toggle-thumb);
+    transition:transform .25s ease,background .25s ease;
+  }
+  [data-theme="light"] .theme-toggle-thumb{transform:translateX(20px)}
+  .theme-toggle-label-light{display:none}
+  [data-theme="light"] .theme-toggle-label-dark{display:none}
+  [data-theme="light"] .theme-toggle-label-light{display:inline}
 
   /* ---------- HERO ---------- */
   header.hero{
@@ -130,7 +214,7 @@
     line-height:.92;
     letter-spacing:.04em;
     color:var(--pink);
-    text-shadow:0 0 22px rgba(255,60,172,.55),0 0 4px rgba(255,60,172,.9);
+    text-shadow:var(--hero-glow);
   }
   .hero p{
     color:var(--muted);
@@ -181,7 +265,7 @@
   /* ---------- ITEM ---------- */
   .item{
     padding:16px 0;
-    border-bottom:1px solid rgba(255,255,255,.045);
+    border-bottom:1px solid var(--divider);
   }
   .item:last-child{border-bottom:none}
   .item-top{
@@ -203,7 +287,7 @@
     white-space:nowrap;
   }
   .desc{
-    color:#c8cde0;
+    color:var(--desc);
     font-size:.96rem;
     margin-top:7px;
     max-width:60ch;
@@ -237,7 +321,7 @@
     align-items:baseline;
     gap:12px;
     padding:11px 0;
-    border-bottom:1px solid rgba(255,255,255,.045);
+    border-bottom:1px solid var(--divider);
   }
   .drink .nm{font-weight:500}
   .drink .sub{color:var(--muted);font-size:.82rem;display:block;margin-top:2px}
@@ -260,11 +344,18 @@
     .drink-grid{grid-template-columns:1fr;gap:0}
     .price-tag{font-size:.95rem;white-space:normal}
     .eyebrow{letter-spacing:.3em;text-indent:0}
-    .hero h1{text-shadow:0 0 12px rgba(255,60,172,.45),0 0 3px rgba(255,60,172,.8)}
+    .hero h1{text-shadow:var(--hero-glow)}
   }
 </style>
 </head>
 <body>
+<button class="theme-toggle" type="button" id="theme-toggle" aria-label="Switch to light mode">
+  <span class="theme-toggle-label theme-toggle-label-dark">Dark</span>
+  <span class="theme-toggle-label theme-toggle-label-light">Light</span>
+  <span class="theme-toggle-track" aria-hidden="true">
+    <span class="theme-toggle-thumb"></span>
+  </span>
+</button>
 <div class="wrap">
 
   <header class="hero">
@@ -475,5 +566,26 @@
   </footer>
 
 </div>
+<script>
+(function(){
+  var btn = document.getElementById('theme-toggle');
+  var meta = document.querySelector('meta[name="theme-color"]');
+  var colors = { dark: '#07080d', light: '#f6f4ef' };
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    if (meta) meta.content = colors[theme];
+    btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+
+  btn.addEventListener('click', function() {
+    var next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+  });
+
+  applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+})();
+</script>
 </body>
 </html>
