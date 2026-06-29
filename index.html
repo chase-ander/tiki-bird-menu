@@ -202,17 +202,25 @@
   }
   .eyebrow{
     font-family:'Bebas Neue',sans-serif;
-    letter-spacing:.5em;
-    font-size:.85rem;
+    letter-spacing:.25em;
+    font-size:clamp(2.8rem,11vw,5rem);
+    line-height:.92;
     color:var(--cyan);
-    text-indent:.5em;
-    margin-bottom:14px;
+    text-indent:.25em;
+    margin-bottom:8px;
+  }
+  .hero-location{
+    font-size:.85rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:20px;
   }
   .hero h1{
     font-family:'Bebas Neue',sans-serif;
-    font-size:clamp(3.4rem,13vw,6.5rem);
+    font-size:clamp(1.8rem,7vw,3.2rem);
     line-height:.92;
-    letter-spacing:.04em;
+    letter-spacing:.12em;
     color:var(--pink);
     text-shadow:var(--hero-glow);
   }
@@ -343,7 +351,8 @@
   @media(max-width:560px){
     .drink-grid{grid-template-columns:1fr;gap:0}
     .price-tag{font-size:.95rem;white-space:normal}
-    .eyebrow{letter-spacing:.3em;text-indent:0}
+    .eyebrow{letter-spacing:.18em;text-indent:0}
+    .hero-location{letter-spacing:.12em}
     .hero h1{text-shadow:var(--hero-glow)}
   }
 </style>
@@ -360,6 +369,7 @@
 
   <header class="hero">
     <div class="eyebrow">TIKI BIRD</div>
+    <div class="hero-location">Grand Junction, CO</div>
     <h1>THE MENU</h1>
     <p>Allergens noted per item. Ask your server with any questions.</p>
   </header>
